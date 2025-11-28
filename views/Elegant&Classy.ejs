@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Resume Builder</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- html2pdf -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+  body {
+    background: linear-gradient(135deg, #e8f0ff, #f5eaff);
+  }
+
+  :root {
+    --theme-header: #1e3a8a;
+    --theme-sidebar: #dbeafe;
+  }
+
+  #a4Wrapper {
+    width: 794px;
+    min-height: 1400px;
+    background: white;
+    margin: 0 auto;
+    padding: 0;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+
+  .resume-header {
+    background: var(--theme-header);
+  }
+
+  .left-sidebar {
+    background: var(--theme-sidebar);
+    height: 400px;
+  }
+
+  .color-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 3px solid white;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  }
+
+  #resumePreview {
+    min-height: 1400px;
+  }
+
+  #resumePreview h1 { 
+    font-size: 48px;
+  }
+
+  #resumePreview p,
+  #resumePreview span {
+    font-size: 15px;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  /* ⭐ UPDATED FONT SIZES + SPACING */
+  .left-sidebar p {
+    font-size: 16px;
+    margin-bottom: 10px;  /* increased vertical spacing */
+  }
+
+  .left-sidebar h2 {
+    font-size: 15px;
+  }
+
+  .right-section p {
+    font-size: 16px;
+  }
+
+  .right-section h2 {
+    font-size: 15px;
+  }
+  .left-sidebar{
+    height: 1200px;
+  }
+</style>
+</head>
+
+<body class="font-sans">
+
+<div class="flex flex-wrap gap-5 p-5 max-w-[1600px] mx-auto items-start">
+
+  <!-- LEFT FORM -->
+  <div class="flex-[1_1_350px] p-5 rounded-lg shadow-md sticky top-5 bg-white">
+    <h2 class="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+      Resume Inputs
+    </h2>
+
+    <!-- COLOR SWITCHER -->
+    <div class="flex gap-4 mb-6">
+      <div class="color-circle" style="background:#1e3a8a" onclick="setTheme('blue')"></div>
+      <div class="color-circle" style="background:#6b21a8" onclick="setTheme('purple')"></div>
+      <div class="color-circle" style="background:#0f766e" onclick="setTheme('teal')"></div>
+      <div class="color-circle" style="background:#B91C1C" onclick="setTheme('red')"></div>
+    </div>
+
+    <!-- Form Inputs -->
+    <label>Your Name</label>
+    <input id="nameInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label>Role</label>
+    <input id="roleInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label>Email</label>
+    <input id="emailInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label>Phone</label>
+    <input id="phoneInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label>Location</label>
+    <input id="locationInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label>LinkedIn</label>
+    <input id="linkedinInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label>GitHub</label>
+    <input id="githubInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label>Professional Summary</label>
+    <textarea id="summaryInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label>Skills</label>
+    <textarea id="skillsInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label>Experience</label>
+    <textarea id="expInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label>Education</label>
+    <textarea id="eduInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label>Projects</label>
+    <textarea id="projInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <button id="downloadBtn"
+            class="w-full py-4 mt-2 text-white text-lg font-bold rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600">
+      Download Resume
+    </button>
+  </div>
+
+  <!-- RIGHT PREVIEW -->
+  <div class="flex-[2_1_700px] min-w-[500px] flex justify-center h-full">
+    <div id="a4Wrapper">
+
+      <div id="resumePreview" class="bg-white shadow-2xl min-w-[500px]">
+
+        <!-- HEADER -->
+        <div class="w-full text-center py-12 resume-header">
+          <h1 id="namePreview" class="text-5xl font-extrabold text-white tracking-wider">Your Name</h1>
+
+          <p id="rolePreview"
+             class="mt-4 inline-block px-8 py-2 text-white border border-white rounded-full tracking-wide">
+            Your Role
+          </p>
+        </div>
+
+        <!-- TWO COLUMN LAYOUT -->
+        <div class="grid grid-cols-2">
+
+          <!-- LEFT -->
+          <div class="left-sidebar p-10 text-gray-800 text-sm">
+            <h2 class="font-bold tracking-widest mb-3">CONTACT INFO</h2>
+            <p><b style="font-weight: 500;">Phone </b> <span id="phonePreview"></span></p>
+            <p>Location<b style="font-weight: 500;"> </b>  <span id="locationPreview"></span></p>
+            <p>Email<span id="emailPreview"></span></p>
+            <p>LinkedIn<span id="linkedinPreview"></span></p>
+            <p>GitHub<span id="githubPreview"></span></p>
+
+            <h2 class="font-bold tracking-widest mt-6 mb-3">EDUCATION</h2>
+            <p id="eduPreview"></p>
+
+            <h2 class="font-bold tracking-widest mt-6 mb-3">SKILLS</h2>
+            <p id="skillsPreview"></p>
+          </div>
+
+          <!-- RIGHT CONTENT -->
+          <div class="p-10 text-gray-900 text-sm right-section">
+            <h2 class="font-bold tracking-widest mb-3">PROFILE</h2>
+            <p id="summaryPreview"></p>
+
+            <h2 class="font-bold tracking-widest mt-6 mb-3">EXPERIENCE</h2>
+            <p id="expPreview"></p>
+
+            <h2 class="font-bold tracking-widest mt-8 mb-3">PROJECTS</h2>
+            <p id="projPreview"></p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* Auto-update preview */
+const fields = ["name","role","email","phone","location","linkedin","github","summary","skills","exp","edu","proj"];
+
+fields.forEach(id => {
+  document.getElementById(id+"Input").addEventListener("input", e => {
+    document.getElementById(id+"Preview").innerText = e.target.value;
+  });
+});
+
+/* Theme Switcher */
+function setTheme(c) {
+  if (c === "blue") {
+    document.documentElement.style.setProperty("--theme-header", "#1e3a8a");
+    document.documentElement.style.setProperty("--theme-sidebar", "#dbeafe");
+  }
+  if (c === "purple") {
+    document.documentElement.style.setProperty("--theme-header", "#6b21a8");
+    document.documentElement.style.setProperty("--theme-sidebar", "#f3e8ff");
+  }
+  if (c === "teal") {
+    document.documentElement.style.setProperty("--theme-header", "#0f766e");
+    document.documentElement.style.setProperty("--theme-sidebar", "#ccfbf1");
+  }
+  if (c === "red") {
+    document.documentElement.style.setProperty("--theme-header", "#B91C1C");
+    document.documentElement.style.setProperty("--theme-sidebar", "#FEE2E2");
+  }
+}
+
+/* Download PDF */
+document.getElementById("downloadBtn").addEventListener("click", () => {
+  html2pdf()
+    .from(document.getElementById("a4Wrapper"))
+    .set({
+      margin: 0,
+      filename: "Resume.pdf",
+      html2canvas: { scale: 2 },
+    })
+    .save();
+});
+</script>
+
+</body>
+</html>

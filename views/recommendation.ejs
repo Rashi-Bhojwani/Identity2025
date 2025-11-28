@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resource Suggestions – HireAI</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { background: linear-gradient(135deg, #e3ebff, #f6eaff); font-family: "Inter", sans-serif; }
+  .text-gradient { background: linear-gradient(135deg, hsl(210 100% 50%), hsl(270 60% 55%)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .bg-gradient-main { background: linear-gradient(135deg, hsl(210 100% 50%), hsl(270 60% 55%)); }
+  .glass { background: rgba(255,255,255,0.55); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.3); border-radius: 1rem; }
+  .glass:hover { box-shadow: 0 12px 40px rgba(100, 120, 255, 0.25); }
+  @keyframes gradientMove { 0%{background-position:0% 50%}100%{background-position:100% 50%} }
+  .animate-gradientMove { background-size: 200% 200%; animation: gradientMove 4s infinite alternate ease-in-out; }
+</style>
+</head>
+<body class="pt-24 text-gray-900">
+
+<!-- NAVBAR -->
+<nav class="fixed top-0 left-0 w-full flex justify-between items-center py-6 px-10 bg-white/40 backdrop-blur-xl border-b border-white/20 shadow-sm z-50">
+  <h1 class="text-2xl font-bold text-gradient">HireAI</h1>
+  <div class="flex items-center gap-10">
+    <div class="flex items-center gap-10 text-lg">
+      <a href="#" class="hover:text-gradient">Features</a>
+      <a href="#" class="hover:text-gradient">How It Works</a>
+      <a href="#" class="hover:text-gradient">Pricing</a>
+    </div>
+    <a href="#" class="text-white px-6 py-2 rounded-lg bg-gradient-main hover:opacity-90">Get Started</a>
+  </div>
+</nav>
+
+<!-- BADGE -->
+<div class="max-w-7xl mx-auto mt-20 px-6 flex justify-start">
+  <span class="px-4 py-2 bg-white/30 backdrop-blur-md rounded-full text-gradient font-semibold shadow animate-gradientMove">
+    ✨ AI-Powered Career Assistant
+  </span>
+</div>
+
+<!-- MAIN SECTION -->
+<section class="max-w-7xl mx-auto mt-10 grid grid-cols-1 md:grid-cols-2 gap-16 items-start px-6">
+
+  <!-- LEFT: Text / Info -->
+  <div class="flex flex-col items-start max-w-xl">
+    <h2 class="text-5xl md:text-6xl font-extrabold leading-snug animate-gradientMove">
+      Get <span class="text-gradient">Resource Suggestions</span> <br>
+      for Your Target Role
+    </h2>
+    <p class="text-gray-700 mt-6 text-lg md:text-xl leading-relaxed">
+      Upload your resume → Our AI analyzes it → Get missing skills and curated resources for your role.
+    </p>
+  </div>
+
+  <!-- RIGHT: Form -->
+  <div class="glass p-8 shadow-lg animate-slideFade w-full">
+    <h3 class="text-2xl font-bold text-center mb-6 text-gradient">Upload Resume & Target Role</h3>
+    <form id="resumeForm" class="space-y-5">
+      <div>
+        <label class="block text-sm font-semibold text-gray-900 mb-1">Resume (PDF)</label>
+        <input type="file" id="resume" accept="application/pdf" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-gray-900 mb-1">Target Role</label>
+        <input type="text" id="role" placeholder="Frontend Developer" required class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
+      <button type="submit" class="mt-4 w-full py-3 text-white font-semibold rounded-xl bg-gradient-main hover:opacity-90">Get Suggestions →</button>
+    </form>
+  </div>
+</section>
+
+<!-- OUTPUT -->
+<section id="output" class="max-w-6xl mx-auto mt-16 px-6"></section>
+
+<!-- FOOTER -->
+<footer class="mt-32 bg-white/60 backdrop-blur p-12 border-t border-gray-200">
+
+  <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+
+    <!-- Logo + text -->
+    <div>
+      <h1 class="text-2xl font-bold text-gradient">HireAI</h1>
+      <p class="text-gray-600 mt-3 leading-relaxed">
+        AI-powered career tools to help you land your dream job.
+      </p>
+    </div>
+
+    <!-- Company -->
+    <div>
+      <h3 class="font-semibold text-lg mb-4">Company</h3>
+      <ul class="space-y-2 text-gray-600">
+        <li><a href="#" class="hover:text-gradient">About</a></li>
+        <li><a href="#" class="hover:text-gradient">Careers</a></li>
+        <li><a href="#" class="hover:text-gradient">Contact</a></li>
+      </ul>
+    </div>
+
+    <!-- Product -->
+    <div>
+      <h3 class="font-semibold text-lg mb-4">Features</h3>
+      <ul class="space-y-2 text-gray-600">
+        <li><a href="/resumebuilder" class="hover:text-gradient">Smart Resume Builder</a></li>
+        <li><a href="/resumeenhancer" class="hover:text-gradient">AI Resume Enhancer</a></li>
+        <li><a href="/aicoverletter" class="hover:text-gradient">Cover Letter Generator</a></li>
+        <li><a href="/cityjobs" class="hover:text-gradient">Jobs in Your City</a></li>
+        <li><a href="/recommendation" class="hover:text-gradient">Resource Suggestions</a></li>
+        <li><a href="/score" class="hover:text-gradient">ATS Score Analyzer</a></li>
+      </ul>
+    </div>
+
+    <!-- Social Icons -->
+    <div>
+      <h3 class="font-semibold text-lg mb-4">Follow Us</h3>
+
+      <div class="flex items-center space-x-5">
+
+        <!-- LinkedIn -->
+        <a href="#" class="text-gray-900 hover:text-gradient transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 
+            2.76 2.24 5 5 5h14c2.76 0 5-2.24 
+            5-5v-14c0-2.76-2.24-5-5-5zm-11 
+            19h-3v-10h3v10zm-1.5-11.27c-.96 0-1.73-.79-1.73-1.76 
+            0-.98.78-1.76 1.73-1.76s1.73.78 
+            1.73 1.76c0 .97-.78 1.76-1.73 1.76zm13.5 
+            11.27h-3v-5.6c0-1.33-.03-3.04-1.85-3.04-1.85 
+            0-2.13 1.45-2.13 2.94v5.7h-3v-10h2.88v1.37h.04c.4-.75 
+            1.38-1.54 2.84-1.54 3.04 0 3.6 2 3.6 
+            4.6v5.6z"/>
+          </svg>
+        </a>
+
+        <!-- Twitter/X -->
+        <a href="#" class="text-gray-900 hover:text-gradient transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M18.244 2h3.308l-7.227 
+            8.26 8.5 11.74H16.48l-5.3-6.937L4.9 
+            22H1.59l7.73-8.835L1.164 2H7.66l4.713 
+            6.231L18.244 2zm-1.16 17.52h1.833L7.08 
+            4.39H5.14l11.944 15.13z"/>
+          </svg>
+        </a>
+
+        <!-- GitHub -->
+        <a href="#" class="text-gray-900 hover:text-gradient transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 .5C5.648.5.5 5.648.5 12c0 
+            5.088 3.292 9.388 7.868 10.92.575.1.785-.25.785-.556 
+            0-.275-.012-1.19-.012-2.168-3.2.7-3.875-1.356-3.875-1.356-.525-1.332-1.287-1.687-1.287-1.687-1.05-.713.075-.7.075-.7 
+            1.162.087 1.775 1.193 1.775 1.193 1.037 1.775 2.712 
+            1.262 3.375.962.1-.75.4-1.263.725-1.562-2.55-.287-5.238-1.275-5.238-5.675 
+            0-1.262.45-2.3 1.187-3.112-.125-.288-.512-1.45.113-3.025 
+            0 0 .963-.312 3.15 1.187a10.84 10.84 0 0 1 2.875-.388c.975 
+            0 1.95.138 2.875.388 2.187-1.5 3.15-1.187 
+            3.15-1.187.625 1.575.238 2.737.113 3.025.738.812 
+            1.188 1.85 1.188 3.112 0 4.412-2.7 
+            5.387-5.263 5.662.412.35.788 1.062.788 
+            2.175 0 1.575-.012 2.838-.012 3.225 
+            0 .3.2.662.8.55A10.994 10.994 0 0 0 23.5 12C23.5 
+            5.648 18.352.5 12 .5z"/>
+          </svg>
+        </a>
+
+        <!-- Instagram -->
+        <a href="#" class="text-gray-900 hover:text-gradient transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M7 2C4.24 2 2 4.24 2 
+            7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 
+            5-5V7c0-2.76-2.24-5-5-5H7zm10 
+            2c1.65 0 3 1.35 3 3v10c0 
+            1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 
+            1.35-3 3-3h10zm-5 3a5 
+            5 0 1 0 0 10 5 5 0 0 0 0-10zm0 
+            2a3 3 0 1 1 0 6 3 3 0 0 1 
+            0-6zm4.5-.75a1.25 1.25 0 1 0 0-2.5 
+            1.25 1.25 0 0 0 0 2.5z"/>
+          </svg>
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="text-center text-gray-600 mt-12 pt-6 border-t border-gray-200">
+    © 2025 HireAI. All rights reserved.
+  </div>
+
+</footer>
+
+
+<script>
+const form = document.getElementById("resumeForm");
+const output = document.getElementById("output");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  output.innerHTML = "<p class='text-center text-gray-700'>Processing…</p>";
+
+  const resumeFile = document.getElementById("resume").files[0];
+  const role = document.getElementById("role").value.trim();
+  if (!resumeFile || !role) {
+    output.innerHTML = "<p class='text-red-500 text-center'>Please fill all fields.</p>";
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("resume", resumeFile);
+  formData.append("targetRole", role);
+
+  try {
+    const res = await fetch("/api/resource-suggestions", { method: "POST", body: formData });
+    if (!res.ok) throw new Error("Server error");
+
+    const data = await res.json();
+
+    // START HTML = Heading + Grid
+    let html = `
+      <h2 class="text-4xl font-extrabold text-center mb-10 text-gradient">
+        Missing Skills & Resources
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    `;
+
+    if (data.missingSkills && data.missingSkills.length) {
+
+      data.missingSkills.forEach(skill => {
+        
+        html += `
+          <div class="glass p-6 rounded-2xl shadow-lg animate-slideFade">
+
+            <h2 class="text-xl font-bold text-gradient mb-3">${skill}</h2>
+
+            <div class="mt-2 space-y-2">
+        `;
+
+        if (data.resources && data.resources[skill]) {
+          data.resources[skill].forEach(link => {
+            html += `
+              <div class="bg-white/60 p-3 rounded-lg shadow">
+                <a href="${link}" target="_blank" class="text-indigo-700 underline hover:text-gradient">
+                  ${link}
+                </a>
+              </div>
+            `;
+          });
+        } else {
+          html += `<p class="text-gray-600">No resources available.</p>`;
+        }
+
+        html += `
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    html += `</div>`; // end grid  
+
+    output.innerHTML = html;
+
+  } catch(err) {
+    console.error(err);
+    output.innerHTML = `<p class='text-red-500 text-center'>${err.message}</p>`;
+  }
+});
+</script>
+
+

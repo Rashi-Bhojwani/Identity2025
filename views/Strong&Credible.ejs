@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Resume Builder</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- html2pdf -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+  body {
+    background: linear-gradient(135deg, #e8f0ff, #f5eaff);
+  }
+  #a4Wrapper {
+    width: 794px;
+    height: 1123px;
+    background: white;
+    margin: 0 auto;
+    padding: 0;
+    position: relative;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  :root {
+    --theme-primary: #1e3a8a;
+  }
+  .color-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  }
+</style>
+</head>
+
+<body class="font-sans">
+
+<div class="flex flex-wrap gap-5 p-5 max-w-[1400px] mx-auto items-start">
+
+  <!-- LEFT FORM -->
+  <div id="formSection" class="flex-[1_1_350px] p-5 rounded-lg shadow-md sticky top-5 bg-white">
+    <h2 class="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+      Resume Inputs
+    </h2>
+
+    <!-- COLOR SWITCHER -->
+    <div class="flex gap-4 mb-6 items-center">
+      <div class="color-circle" style="background:#1e3a8a" onclick="setTheme('blue')"></div>
+      <div class="color-circle" style="background:#6b21a8" onclick="setTheme('purple')"></div>
+      <div class="color-circle" style="background:#0f766e" onclick="setTheme('teal')"></div>
+      <div class="color-circle" style="background:#b91c1c" onclick="setTheme('red')"></div>
+    </div>
+
+    <label class="block mb-1 text-base">Your Name</label>
+    <input type="text" id="nameInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1 text-base">Role</label>
+    <input type="text" id="roleInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1 text-base">Email</label>
+    <input type="text" id="emailInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1 text-base">Phone</label>
+    <input type="text" id="phoneInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1 text-base">Location</label>
+    <input type="text" id="locationInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1 text-base">Summary</label>
+    <textarea id="summaryInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label class="block mb-1 text-base">Skills</label>
+    <textarea id="skillsInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label class="block mb-1 text-base">Experience</label>
+    <textarea id="expInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label class="block mb-1 text-base">Education</label>
+    <textarea id="eduInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label class="block mb-1 text-base">Projects</label>
+    <textarea id="projInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <button id="downloadBtn"
+      class="w-full py-4 mt-2 text-white text-lg font-bold rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600">
+      Download Resume
+    </button>
+  </div>
+
+  <!-- RIGHT PREVIEW -->
+  <div class="flex-[2_1_600px] min-w-[450px] flex justify-center overflow-x-auto">
+    <div id="a4Wrapper">
+
+      <!-- TEMPLATE -->
+      <div id="resumePreview" class="w-full h-full bg-white flex">
+
+        <!-- LEFT SIDEBAR -->
+        <div class="w-[32%] bg-[var(--theme-primary)] text-white p-8 flex flex-col">
+
+          <h2 class="text-lg font-bold mb-2 border-b border-white pb-1">PROFILE SUMMARY</h2>
+          <p id="summaryPreviewLeft" class="text-sm whitespace-pre-wrap mb-6"></p>
+
+          <h2 class="text-lg font-bold mb-2 border-b border-white pb-1">EDUCATION</h2>
+          <p id="eduPreview" class="text-sm whitespace-pre-wrap mb-6"></p>
+
+          <h2 class="text-lg font-bold mb-2 border-b border-white pb-1">SKILLS</h2>
+          <p id="skillsPreview" class="text-sm whitespace-pre-wrap mb-6"></p>
+
+        </div>
+
+        <!-- RIGHT SECTION -->
+        <div class="w-[68%] p-10">
+
+          <h1 id="namePreview" class="text-4xl font-extrabold text-gray-900">Your Name</h1>
+          <p id="rolePreview" class="text-lg text-gray-600 mt-1">Your Role</p>
+
+          <!-- CONTACT DETAILS -->
+          <div class="mt-4 mb-6 text-gray-700 text-sm leading-6">
+            <p><strong>Email:</strong> <span id="emailPreview"></span></p>
+            <p><strong>Phone:</strong> <span id="phonePreview"></span></p>
+            <p><strong>Location:</strong> <span id="locationPreview"></span></p>
+          </div>
+
+          <h2 class="text-xl font-bold text-gray-800 border-b pb-1 mb-2">PROFILE SUMMARY</h2>
+          <p id="summaryPreview" class="text-sm text-gray-700 whitespace-pre-wrap mb-6"></p>
+
+          <h2 class="text-xl font-bold text-gray-800 border-b pb-1 mb-2">WORK EXPERIENCE</h2>
+          <p id="expPreview" class="text-sm text-gray-700 whitespace-pre-wrap mb-6"></p>
+
+          <h2 class="text-xl font-bold text-gray-800 border-b pb-1 mb-2">PROJECTS</h2>
+          <p id="projPreview" class="text-sm text-gray-700 whitespace-pre-wrap mb-6"></p>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* LIVE UPDATE */
+const fields = ["name","role","email","phone","location","summary","skills","exp","edu","proj"];
+fields.forEach(id=>{
+  document.getElementById(id+"Input")?.addEventListener("input",e=>{
+    if(id === "summary"){
+      document.getElementById("summaryPreview").innerText=e.target.value;
+      document.getElementById("summaryPreviewLeft").innerText=e.target.value;
+    } else {
+      document.getElementById(id+"Preview").innerText=e.target.value;
+    }
+  });
+});
+
+/* THEME */
+function setTheme(color){
+  const themes={blue:"#1e3a8a",purple:"#6b21a8",teal:"#0f766e",red:"#b91c1c"};
+  document.documentElement.style.setProperty("--theme-primary",themes[color]);
+}
+
+/* PDF */
+document.getElementById("downloadBtn").addEventListener("click",()=>{
+  html2pdf().set({ margin:0, filename:"Resume.pdf", html2canvas:{scale:2}, jsPDF:{unit:"px",format:[794,1123]} })
+  .from(document.getElementById("a4Wrapper")).save();
+});
+</script>
+
+</body>
+</html>

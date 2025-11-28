@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    * { word-wrap: break-word; overflow-wrap: break-word; }
+
+    body {
+      background: linear-gradient(135deg, #e8f0ff, #f5eaff);
+    }
+
+    :root {
+      --theme-primary: #1e3a8a;
+      --muted: #6b7280;
+    }
+
+    #a4Wrapper {
+      width: 794px;
+      margin: 0 auto;
+      background: #ffffff;
+      position: relative;
+      padding: 0;
+      box-shadow: 0 0 20px rgba(0,0,0,0.06);
+      border-radius: 10px;
+      overflow: hidden;
+      min-height: 1123px; 
+      height: auto;
+    }
+
+    #resumePreview {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      min-height: 100%;
+      background: white;
+      flex-wrap: wrap;
+    }
+
+    .resume-left, .resume-right {
+      height: auto;
+      word-break: break-word;
+    }
+
+    .resume-left { 
+      padding: 40px 32px; 
+      border-right: 2px solid #e5e7eb; 
+      flex: 1 1 35%; 
+      box-sizing: border-box;
+      height: 1200px;
+    }
+
+    .resume-right { 
+      padding: 40px 48px; 
+      flex: 1 1 65%;
+      box-sizing: border-box;
+      
+    }
+
+    .resume-name {
+      font-size: 34px; font-weight: 900; letter-spacing: 1px;
+      font-family: 'Georgia', serif; color: #111827;
+      /* background-color: #1e3a8a; */
+    }
+
+    .resume-role { font-size: 15px; font-weight: 600; color: var(--theme-primary); margin-top: -4px; }
+    .contact-line { width: 100%; border-bottom: 1px solid #d1d5db; margin: 20px 0; }
+
+    .section-title {
+      font-size: 14px; font-weight: 900; letter-spacing: 1px;
+      text-transform: uppercase; border-bottom: 2px solid var(--theme-primary);
+      width: max-content; padding-bottom: 3px; color: var(--theme-primary);
+      margin-top: 24px; margin-bottom: 10px;
+    }
+
+    .left-title {
+      font-size: 12px; font-weight: 700; color: var(--theme-primary);
+      letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;
+    }
+
+    .left-text { 
+      font-size: 13px; color: #374151; line-height: 1.5; margin-bottom: 8px; 
+      word-break: break-word;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .summary-text, .exp-item, .edu-item, .proj-item {
+      font-size: 14px; color: #374151; line-height: 1.6; margin-bottom: 10px;
+      word-break: break-word;
+    }
+
+    /* Skills fix */
+    .skills-list { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 6px; 
+    }
+
+    .skill-pill {
+      background: #fff;
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 999px;
+      /* border: 1px solid #e5e7eb; */
+      word-break: break-word;
+      flex-shrink: 1;
+    }
+
+    /* Certifications fix */
+    #certsPreview {
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .color-circle {
+      width: 24px; height: 24px; border-radius: 999px;
+      cursor: pointer; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
+
+    .icon { width: 16px; display: inline-block; margin-right: 6px; }
+  </style>
+</head>
+
+<body class="font-sans">
+<div class="flex flex-wrap gap-5 p-5 max-w-[1400px] mx-auto items-start">
+
+  <!-- FORM -->
+  <div id="formSection" class="flex-[1_1_350px] p-5 rounded-lg shadow-md sticky top-5 bg-white">
+    <h2 class="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">Resume Inputs</h2>
+
+    <div class="flex gap-4 mb-6 items-center">
+      <div class="color-circle" style="background:#1e3a8a" onclick="setTheme('blue')"></div>
+      <div class="color-circle" style="background:#6b21a8" onclick="setTheme('purple')"></div>
+      <div class="color-circle" style="background:#0f766e" onclick="setTheme('teal')"></div>
+      <div class="color-circle" style="background:#b91c1c" onclick="setTheme('red')"></div>
+    </div>
+
+    <label class="block mb-1">Your Name</label>
+    <input id="nameInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1">Role</label>
+    <input id="roleInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1">Email</label>
+    <input id="emailInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1">Phone</label>
+    <input id="phoneInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1">Location</label>
+    <input id="locationInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1">LinkedIn</label>
+    <input id="linkedinInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1">GitHub</label>
+    <input id="githubInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1">Professional Summary</label>
+    <textarea id="summaryInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label class="block mb-1">Skills</label>
+    <textarea id="skillsInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label class="block mb-1">Certifications</label>
+    <textarea id="certsInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label class="block mb-1">Experience</label>
+    <textarea id="expInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label class="block mb-1">Education</label>
+    <textarea id="eduInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label class="block mb-1">Projects</label>
+    <textarea id="projInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <button id="downloadBtn" class="w-full py-4 mt-2 text-white text-lg font-bold rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600">Download Resume</button>
+  </div>
+
+  <!-- RESUME PREVIEW -->
+  <div class="flex-[2_1_600px] min-w-[450px] flex justify-center overflow-x-auto">
+    <div id="a4Wrapper">
+      <div id="resumePreview">
+
+        <!-- LEFT -->
+        <div class="resume-left">
+          <div class="left-title">Contact</div>
+
+          <div class="left-text">
+            <img class="icon" src="https://cdn-icons-png.flaticon.com/512/724/724664.png">
+            <span id="phonePreview"></span>
+          </div>
+
+          <div class="left-text">
+            <img class="icon" src="https://cdn-icons-png.flaticon.com/512/732/732200.png">
+            <span id="emailPreview"></span>
+          </div>
+
+          <div class="left-text">
+            <img class="icon" src="https://cdn-icons-png.flaticon.com/512/535/535239.png">
+            <span id="locationPreview"></span>
+          </div>
+
+          <div class="left-text">
+            <img class="icon" src="https://cdn-icons-png.flaticon.com/512/3536/3536505.png">
+            <span id="linkedinPreview"></span>
+          </div>
+
+          <div class="left-text">
+            <img class="icon" src="https://cdn-icons-png.flaticon.com/512/1051/1051326.png">
+            <span id="githubPreview"></span>
+          </div>
+
+          <div class="left-title mt-6">Skills</div>
+          <div id="skillsPreview" class="skills-list"></div>
+
+          <div class="left-title mt-6">Certifications</div>
+          <div id="certsPreview" class="left-text"></div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="resume-right">
+          <div id="namePreview" class="resume-name">Your Name</div>
+          <div id="rolePreview" class="resume-role">Your Role</div>
+
+          <div class="contact-line"></div>
+
+          <div class="section-title">Profile</div>
+          <div id="summaryPreview" class="summary-text"></div>
+
+          <div class="section-title">Education</div>
+          <div id="eduPreview" class="edu-item"></div>
+
+          <div class="section-title">Professional Experience</div>
+          <div id="expPreview" class="exp-item"></div>
+
+          <div class="section-title">Projects</div>
+          <div id="projPreview" class="proj-item"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const fields = ["name","role","email","phone","location","linkedin","github","summary","skills","exp","edu","proj","certs"];
+
+fields.forEach(f => {
+  document.getElementById(f + "Input")?.addEventListener("input", e => {
+    if(f !== "skills" && f !== "certs"){
+      document.getElementById(f + "Preview").innerText = e.target.value || "";
+    }
+
+    if(f === "skills"){
+      const container = document.getElementById("skillsPreview");
+      container.innerHTML = "";
+      e.target.value.split(",").forEach(s=>{
+        if(s.trim()){
+          const div = document.createElement("div");
+          div.className = "skill-pill";
+          div.innerText = s.trim();
+          container.appendChild(div);
+        }
+      });
+    }
+
+    if(f === "certs"){
+      const container = document.getElementById("certsPreview");
+      container.innerHTML = "";
+      e.target.value.split(",").forEach(c=>{
+        if(c.trim()){
+          const div = document.createElement("div");
+          div.innerText = ` ${c.trim()}`;
+          container.appendChild(div);
+        }
+      });
+    }
+  });
+});
+
+function setTheme(theme){
+  const colors = {blue:"#1e3a8a",purple:"#6b21a8",teal:"#0f766e",red:"#b91c1c"};
+  document.documentElement.style.setProperty("--theme-primary", colors[theme]);
+}
+
+document.getElementById("downloadBtn").addEventListener("click", ()=>{
+  const element = document.getElementById("a4Wrapper");
+  const opt = {
+    margin:0,
+    filename:"Resume.pdf",
+    image:{type:"jpeg", quality:0.98},
+    html2canvas:{scale:2},
+    jsPDF:{unit:"pt", format:"a4", orientation:"portrait"}
+  };
+  html2pdf().from(element).set(opt).save();
+});
+</script>
+
+</body>
+</html>

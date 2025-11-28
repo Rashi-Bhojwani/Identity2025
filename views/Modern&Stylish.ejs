@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Resume Builder</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- html2pdf -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+  * {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    -webkit-hyphens: auto;
+    -ms-word-break: break-word;
+  }
+
+  body {
+    background: linear-gradient(135deg, #e8f0ff, #f5eaff);
+  }
+
+  :root {
+    --theme-primary: #1e3a8a;
+    --muted: #6b7280;
+  }
+
+  #a4Wrapper {
+    width: 794px;
+    margin: 0 auto;
+    background: #f9fafb;
+    position: relative;
+    padding: 0;
+    box-shadow: 0 0 20px rgba(0,0,0,0.06);
+    border-radius: 10px;
+    overflow: hidden;
+    
+  }
+
+  /* RIGHT SIDE TEMPLATE */
+  #resumePreview {
+    width: 100%;
+    background: white;
+    display: grid;
+    grid-template-columns: 220px auto;
+    min-height: 100%;
+  }
+
+  /* LEFT GREY SIDEBAR */
+  .resume-sidebar {
+    background: #f3f4f6;
+    padding: 32px 24px;
+    border-right: 1px solid #e5e7eb;
+    height: 1200px;
+  }
+
+  .sidebar-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--theme-primary);
+    margin-bottom: 10px;
+  }
+
+  .sidebar-block {
+    margin-bottom: 26px;
+  }
+
+  .sidebar-text {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #374151;
+    margin-bottom: 8px;
+  }
+
+  /* RIGHT MAIN BODY */
+  .resume-main {
+    padding: 34px 44px;
+  }
+
+  .resume-name {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--theme-primary);
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+
+  .resume-role {
+    font-size: 14px;
+    color: var(--theme-primary);
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+
+  .contact-horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px 28px;
+    margin-bottom: 26px;
+  }
+
+  .section-title {
+    color: var(--theme-primary);
+    font-weight: 800;
+    margin-top: 22px;
+    font-size: 16px;
+    border-left: 4px solid var(--theme-primary);
+    padding-left: 10px;
+    margin-bottom: 12px;
+  }
+
+  .body-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 26px 36px;
+    margin-top: 12px;
+  }
+
+  .summary-text {
+    font-size: 14px;
+    color: #111827;
+    line-height: 1.6;
+  }
+
+  .block-title {
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 15px;
+    color: #111827;
+  }
+
+  .edu-item, .exp-item, .proj-item {
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.55;
+  }
+
+  .skills-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .skill-pill {
+    /* background: #e5e7eb; */
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 999px;
+    color: #111827;
+  }
+
+  .resume-bullets ul {
+    list-style: disc;
+    margin-left: 18px;
+    margin-top: 6px;
+  }
+
+  .color-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 0 4px rgba(0,0,0,0.15);
+  }
+</style>
+</head>
+
+<body class="font-sans">
+
+<div class="flex flex-wrap gap-5 p-5 max-w-[1400px] mx-auto items-start">
+
+  <!-- LEFT FORM -->
+  <div id="formSection"
+       class="flex-[1_1_350px] p-5 rounded-lg shadow-md sticky top-5 bg-white">
+
+    <h2 class="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+      Resume Inputs
+    </h2>
+
+    <div class="flex gap-4 mb-6 items-center">
+      <div class="color-circle" style="background:#1e3a8a" onclick="setTheme('blue')"></div>
+      <div class="color-circle" style="background:#6b21a8" onclick="setTheme('purple')"></div>
+      <div class="color-circle" style="background:#0f766e" onclick="setTheme('teal')"></div>
+      <div class="color-circle" style="background:#b91c1c" onclick="setTheme('red')"></div>
+    </div>
+
+    <!-- ALL INPUTS (unchanged) -->
+    <label class="block mb-1 text-base">Your Name</label>
+    <input id="nameInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1 text-base">Role</label>
+    <input id="roleInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1 text-base">Email</label>
+    <input id="emailInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1 text-base">Phone</label>
+    <input id="phoneInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1 text-base">Location</label>
+    <input id="locationInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1 text-base">LinkedIn</label>
+    <input id="linkedinInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1 text-base">GitHub</label>
+    <input id="githubInput" class="w-full mb-3 p-3 border rounded-md" />
+
+    <label class="block mb-1 text-base">Professional Summary</label>
+    <textarea id="summaryInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label class="block mb-1 text-base">Skills</label>
+    <textarea id="skillsInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label class="block mb-1 text-base">Certifications</label>
+    <textarea id="certsInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+
+    <label class="block mb-1 text-base">Experience</label>
+    <textarea id="expInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label class="block mb-1 text-base">Education</label>
+    <textarea id="eduInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <label class="block mb-1 text-base">Projects</label>
+    <textarea id="projInput" rows="3" class="w-full mb-3 p-3 border rounded-md"></textarea>
+
+    <button id="downloadBtn"
+            class="w-full py-4 mt-2 text-white text-lg font-bold rounded-lg
+                   bg-gradient-to-r from-blue-600 to-indigo-600">
+      Download Resume
+    </button>
+  </div>
+
+  <!-- RIGHT PREVIEW -->
+  <div class="flex-[2_1_600px] min-w-[450px] flex justify-center overflow-x-auto ">
+    <div id="a4Wrapper ">
+
+      <div id="resumePreview">
+
+        <!-- SIDEBAR -->
+        <div class="resume-sidebar">
+          <div class="sidebar-block">
+            <div class="sidebar-title">Contact</div>
+            <div class="sidebar-text" id="phonePreview"></div>
+            <div class="sidebar-text" id="emailPreview"></div>
+            <div class="sidebar-text" id="locationPreview"></div>
+            <div class="sidebar-text" id="linkedinPreview"></div>
+            <div class="sidebar-text" id="githubPreview"></div>
+          </div>
+
+          <div class="sidebar-block">
+            <div class="sidebar-title">Skills</div>
+            <div id="skillsPreview" class="skills-list"></div>
+          </div>
+
+          <div class="sidebar-block">
+            <div class="sidebar-title">Certifications</div>
+            <div id="certsPreview" class="sidebar-text"></div>
+          </div>
+        </div>
+
+        <!-- MAIN -->
+        <div class="resume-main">
+
+          <div id="namePreview" class="resume-name">Your Name</div>
+          <div id="rolePreview" class="resume-role">Your Role</div>
+
+          <div class="section-title">Profile</div>
+          <div id="summaryPreview" class="summary-text"></div>
+
+          <div class="body-grid">
+
+            <div>
+              <div class="block-title">Education</div>
+              <div id="eduPreview" class="edu-item"></div>
+            </div>
+
+            <div>
+              <div class="block-title">Professional Experience</div>
+              <div id="expPreview" class="exp-item resume-bullets"></div>
+            </div>
+
+            <div>
+              <div class="block-title">Projects</div>
+              <div id="projPreview" class="proj-item resume-bullets"></div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* LIVE PREVIEW */
+const fields = [
+  "name", "role", "email", "phone", "location",
+  "linkedin", "github", "summary", "skills",
+  "exp", "edu", "proj", "certs"
+];
+
+fields.forEach(f => {
+  document.getElementById(f + "Input")?.addEventListener("input", e => {
+
+    // NORMAL TEXT PREVIEW
+    if (f !== "skills" && f !== "certs") {
+      document.getElementById(f + "Preview").innerText = e.target.value || "";
+    }
+
+    /* SKILLS → pills */
+    if (f === "skills") {
+      const container = document.getElementById("skillsPreview");
+      container.innerHTML = "";
+
+      const parts = (e.target.value || "")
+        .split(/[\n,]/)
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      parts.forEach(p => {
+        const pill = document.createElement("div");
+        pill.className = "skill-pill";
+        pill.innerText = p;
+        container.appendChild(pill);
+      });
+    }
+
+    /* CERTIFICATIONS → plain lines */
+    if (f === "certs") {
+      const container = document.getElementById("certsPreview");
+      container.innerHTML = "";
+
+      const items = (e.target.value || "")
+        .split(/[\n,]/)
+        .map(i => i.trim())
+        .filter(Boolean);
+
+      if (items.length === 0) {
+        container.innerHTML = "<div class='sidebar-text'>Add certifications here...</div>";
+        return;
+      }
+
+      items.forEach(c => {
+        const div = document.createElement("div");
+        div.className = "sidebar-text";
+        div.innerText = c;
+        container.appendChild(div);
+      });
+    }
+  });
+});
+
+
+/* THEME SWITCHER FIX */
+function setTheme(color) {
+  if (color === "blue")  document.documentElement.style.setProperty("--theme-primary", "#1e3a8a");
+  if (color === "purple")document.documentElement.style.setProperty("--theme-primary", "#6b21a8");
+  if (color === "teal")  document.documentElement.style.setProperty("--theme-primary", "#0f766e");
+  if (color === "red")   document.documentElement.style.setProperty("--theme-primary", "#b91c1c");
+}
+
+/* DOWNLOAD PDF */
+document.getElementById("downloadBtn").addEventListener("click", () => {
+  const resume = document.getElementById("a4Wrapper");
+  const options = {
+    margin: 10,
+    filename: "Resume.pdf",
+    image: { type: "jpeg", quality: 1 },
+    html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+  };
+  html2pdf().set(options).from(resume).save();
+});
+</script>
+
+</body>
+</html>
