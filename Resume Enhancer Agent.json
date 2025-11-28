@@ -1,0 +1,529 @@
+{
+  "name": "Resume Enhancer",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the job posting information:\nCompany Name:{{ $json.companyName }} \nJob Posting Description: {{ $json.descriptionText }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an expert LinkedIn job posting filtering agent. Your only task is to determine whether or not the job posting provided to you is suitable for the specific candidate with the provided original resume. The original resume may include various skills or qualifications, you will have to think deeply and determine if any of the candidate's skillsets or knowledge is suitable to the job posting.\n\nHere is the information from the job posting and company:\nCompany Name: {{ $json.companyName }}\nJob Posting Description: {{ $json.descriptionText }}\n\nHere is the candidate's original resume: {{ $('Webhook').item.json.body.resume }}\n\nIf the job posting is suitable to the candidate according to their skills, experience and knowledge. You must rate whether or not the candidate's resume is suitable to the job posting out of 100. If the rating is 0, then the output will be 0 meaning that the job posting in NOT suitable to the candidate at all. If the rating is 100, then the output will be 100 meaning that the job posting is extremely suitable to the candidate.\n\nOutput in JSON format as indicated in the output parser."
+        }
+      },
+      "id": "13d10466-f8bb-4c0f-9126-622e1d662ec9",
+      "name": "Job Matching Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        2400,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/curious_coder~linkedin-jobs-scraper/run-sync-get-dataset-items?token=apify_api_hdL39CSKrgNBVfZhbg1U1KVtRQgciO3QEg0Y",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"count\": 100,\n    \"scrapeCompany\": true,\n    \"urls\": [\n        \"https://www.linkedin.com/jobs/search-results/?currentJobId=4336391165&keywords=ai%20automation&origin=JobSearchOrigin_JOB_SEARCH_PAGE_LOCATION_AUTOCOMPLETE&referralSearchId=Q4SqlUdsZ7yasbFvkB1Hww%3D%3D&geoId=103644278&f_TPR=r86400\"\n    ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2928,
+        -96
+      ],
+      "id": "6d70c6b6-1482-4ca1-9b6f-ab85b3c40b00",
+      "name": "LinkedIn Jobs Scraper",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mlsFq4xjKBSf356E",
+          "name": "Header Auth account 4"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        2768,
+        80
+      ],
+      "id": "adf69d95-b4e8-428f-bbb0-3c23583c4609",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"company_name\": \"string\",\n  \"job_description\": \"string\", \n  \"rating\": 0,\n  \"justification\": \"string\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2640,
+        64
+      ],
+      "id": "644d2398-cf77-43b8-bf15-4d1dc88b93b3",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        2976,
+        192
+      ],
+      "id": "1778c660-a430-42ce-bed7-c90c71d24c02",
+      "name": "Limit 1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Job Posting Description: {{ $('Limit 4').item.json.descriptionText }}\nCandidate's Original Resume: {{ $('Webhook').item.json.body.resume }}\n",
+        "options": {
+          "systemMessage": "=You are an expert resume building specialist. Your task is to THINK DEEPLY to build AND enhance the originally provided resume based on the job requirements from the LinkedIn job postings.\n\nNOTE: \nThe original resume may be unstructured but contains all of the candidate's relevant skills, experience and education.\n\nINSTRUCTIONS:\n1. Take the original resume content and the job posting details\n2. Recreate and enhance the resume to tailor and match the job requirements of the posting\n3. Keep all original sections: Summary, Experience, Education, Skills, Projects, Awards & Certifications\n4. Improve the content to highlight relevant skills and experiences\n5. Maintain the professional structure and formatting\n6. Output the COMPLETE enhanced resume with ALL sections\n7. DO NOT include the Complementary Skillsets portion of the resume. That is only there as add ons to assist with tailoring the resume. \n\nIMPORTANT FORMATTING RULES:\n- Output ONLY clean HTML content, no markdown formatting\n- Do NOT include ```html or ``` or backticks in your response\n- Do NOT include the word \"html\" at the beginning\n\nEXAMPLE STRUCTURE:\n\n<h1>Jimmy Jim Jim</h1>\n<div class=\"job-title\"><strong>Software Developer</strong></div>\n\n<div class=\"contact-section\">\n<strong>Contact:</strong>\n<ul>\n<li>Phone: (555) 123-4567</li>\n<li>Email: jimmy.jim.jim@email.com</li>\n<li>LinkedIn: linkedin.com/in/jimmyjimjimdev</li>\n<li>GitHub: github.com/jimmyjimjim-dev</li>\n</ul>\n</div>\n\n<h2><strong>Summary</strong></h2>\n<p class=\"summary\">[Enhanced summary here]</p>\n\n<h2><strong>Experience</strong></h2>\n[Job entries with proper HTML structure]\n\nStart your response directly with <h1> and end with the last job entry. No extra text or formatting markers."
+        }
+      },
+      "id": "95ae6a30-d502-4be9-92db-99f925a0164a",
+      "name": "Resume Building Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        3168,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "folderId": "16eWqFlStXWHbygcSEzB6LXSYa24RCfiD",
+        "title": "=Enhanced Resume: {{ $('Limit 1').item.json.output.company_name }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        544
+      ],
+      "id": "71a12a4c-1b2e-4d38-a543-8a6a92af194f",
+      "name": "Create Enhanced Resume",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "CtmqOlv47LELO4lB",
+          "name": "Google Docs account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://www.googleapis.com/upload/drive/v3/files/{{ $json.id }}?uploadType=media",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDocsOAuth2Api",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"content-type\":\"text/html\"\n}",
+        "sendBody": true,
+        "contentType": "raw",
+        "body": "={{ $('HTML Formatter').item.json.formattedResume }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2880,
+        544
+      ],
+      "id": "2f9f46ea-d341-4a5c-b425-eb3deb80e206",
+      "name": "Upload Updated Resume",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "CtmqOlv47LELO4lB",
+          "name": "Google Docs account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the HTML content from the AI agent\nconst htmlContent = $input.all()[0].json.output;\n\n// Create CSS styles that match the original resume format exactly\nconst cssStyles = 'body { font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif; line-height: 1.4; color: #333; max-width: 8.5in; margin: 0 auto; padding: 1in; background: white; font-size: 11pt; } ' +\n'h1 { font-size: 24pt; font-weight: bold; margin: 0 0 4pt 0; color: #000; } ' +\n'h2 { font-size: 14pt; font-weight: bold; margin: 20pt 0 8pt 0; color: #000; } ' +\n'h3 { font-size: 11pt; font-weight: bold; margin: 12pt 0 4pt 0; color: #000; } ' +\n'p { margin: 0 0 6pt 0; line-height: 1.3; } ' +\n'ul { margin: 4pt 0 8pt 0; padding-left: 16pt; list-style-type: disc; } ' +\n'li { margin: 2pt 0; line-height: 1.3; } ' +\n'.contact-info { margin-bottom: 16pt; font-size: 10pt; line-height: 1.2; } ' +\n'.contact-info p { margin: 1pt 0; } ' +\n'.job-title { font-size: 12pt; font-weight: normal; margin: 2pt 0 12pt 0; color: #666; } ' +\n'.job-header { font-weight: bold; margin: 8pt 0 2pt 0; } ' +\n'.job-company { font-style: italic; margin: 0 0 4pt 0; font-size: 10pt; } ' +\n'.section { margin-bottom: 16pt; } ' +\n'.skills-section ul { list-style-type: none; padding-left: 0; } ' +\n'.skills-section li { margin: 1pt 0; } ' +\n'strong { font-weight: bold; } ' +\n'a { color: #0066cc; text-decoration: none; } ' +\n'a:hover { text-decoration: underline; } ' +\n'@media print { body { padding: 0.5in; font-size: 10pt; } h1 { font-size: 22pt; } h2 { font-size: 13pt; } }';\n\n// Build the complete HTML\nconst styledHtml = '<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>' + cssStyles + '</style></head><body>' + htmlContent + '</body></html>';\n\nreturn {\n  json: {\n    formattedResume: styledHtml,\n    status: \"success\"\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        544
+      ],
+      "id": "c9c9cb6e-18f0-44e1-a214-6252bd67869a",
+      "name": "HTML Formatter"
+    },
+    {
+      "parameters": {
+        "chatId": "1816225266",
+        "text": "={{ $json.name }} Completed",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3136,
+        656
+      ],
+      "id": "704db3d3-3f82-4e65-a829-dd5c18f619a2",
+      "name": "Telegram Response",
+      "webhookId": "1cc5869f-a534-4231-9278-2e67a7a2524b",
+      "credentials": {
+        "telegramApi": {
+          "id": "ZGQTUGCZuhLxeCct",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUREMAILHERE@gmail.com",
+        "subject": "={{ $json.name }} Completed",
+        "emailType": "text",
+        "message": "={{ $json.name }} Completed",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        3136,
+        432
+      ],
+      "id": "e1c1f4d1-1a46-4c20-87ec-57bb497cad21",
+      "name": "Email Response",
+      "webhookId": "10cce0ab-32dd-4f1b-b947-4b7c332fa06c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dm5kB42Ljb4CskvV",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Input Original Resume",
+        "height": 240,
+        "width": 512,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2336,
+        -176
+      ],
+      "id": "07837960-b0e3-4c7f-991d-396f3e318078",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Find Daily Job Postings",
+        "height": 240,
+        "width": 576,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2848,
+        -176
+      ],
+      "id": "9f297c4a-e081-43e1-ba73-7df2da2b27c0",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Filter & Build/Enhance",
+        "height": 336,
+        "width": 1088
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2336,
+        80
+      ],
+      "id": "13633045-5538-49d4-ad98-e32ac3dfec67",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Tailored Resume",
+        "height": 320,
+        "width": 1088,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2336,
+        416
+      ],
+      "id": "e804d951-7794-4369-8cf0-0b3e73cc3cd8",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "maxItems": 4
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        3248,
+        -96
+      ],
+      "id": "2d45589e-7b57-446c-a486-eb0868b823c8",
+      "name": "Limit 4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "match-score-condition",
+              "leftValue": "={{ $json.output.rating }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e83afc1a-52a2-4740-9761-e1ef896c121f",
+      "name": "65% or Higher Qualification",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2752,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ResumeEnhancer",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        2384,
+        -96
+      ],
+      "id": "ff58d1f3-2dc0-4c34-ac80-6dc9fe34f085",
+      "name": "Webhook",
+      "webhookId": "5caf819d-129e-4081-8d09-cf10b258abb9"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2896,
+        80
+      ],
+      "id": "df120beb-50a0-45d5-ae4e-2e2e13cbbc4b",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "h4JhiGsaGJ3dRqqS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Job Matching Agent": {
+      "main": [
+        [
+          {
+            "node": "65% or Higher Qualification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Jobs Scraper": {
+      "main": [
+        [
+          {
+            "node": "Limit 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Job Matching Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Resume Building Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Job Matching Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit 1": {
+      "main": [
+        [
+          {
+            "node": "Resume Building Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resume Building Agent": {
+      "main": [
+        [
+          {
+            "node": "HTML Formatter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Enhanced Resume": {
+      "main": [
+        [
+          {
+            "node": "Upload Updated Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Updated Resume": {
+      "main": [
+        [
+          {
+            "node": "Telegram Response",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML Formatter": {
+      "main": [
+        [
+          {
+            "node": "Create Enhanced Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit 4": {
+      "main": [
+        [
+          {
+            "node": "Job Matching Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "65% or Higher Qualification": {
+      "main": [
+        [
+          {
+            "node": "Limit 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn Jobs Scraper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Job Matching Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Resume Building Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c0099eba-f3df-45b7-aed1-cc3a573bbca6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2efc30b9e9b5bea3801c341fe6fffe5899737d962cbb1037796147ef3b5bb687"
+  },
+  "id": "KPibafHln9BrOhvd",
+  "tags": []
+}
